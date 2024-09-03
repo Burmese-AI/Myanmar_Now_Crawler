@@ -63,7 +63,7 @@ class MyanmarNowWorker:
                 self.logger.info(f'\n{title} \n{date}')
                 return Article(
                     title=title,
-                    sub_title=sub_title,
+                    subtitle=sub_title,
                     date=date,
                     content=content,
                     source=link

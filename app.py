@@ -1,5 +1,13 @@
 from flask import Flask, request, render_template, jsonify
 
+from news_web.myanmar_now.crawler import MyanmarNowCrawler
+from config import setup_chrome
+
+
+driver = setup_chrome()
+mn_crawler = MyanmarNowCrawler(driver)
+
+
 app = Flask(__name__, template_folder='./UI')
 
 @app.route('/')
@@ -9,12 +17,20 @@ def index():
 
 @app.route('/crawl', methods=['POST'])
 def crawl():
-    print(f"Received request: {request.form}")
     try:
         data = request.form
         url = data.get('url')
-        print(f"Crawling URL: {url}")
-        return jsonify({'message': 'Crawling started', 'url': url})
+
+        print(f"requested URL: {url}")
+        news = mn_crawler.crawl(url)
+        print(news)
+
+        if not isinstance(news, list):
+            news = [news]
+
+        response = [article.__dict__ for article in news]
+
+        return jsonify(response)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

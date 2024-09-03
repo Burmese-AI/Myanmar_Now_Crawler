@@ -6,11 +6,13 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 
 from .worker import MyanmarNowWorker
 
+
 class MyanmarNowCrawler:
     def __init__(self, driver: WebDriver):
         self.driver = driver
         self.logger = setup_logger(__name__)
         self.worker = MyanmarNowWorker(driver)
+
 
     #to crawl data from page containing multiple articles
     def crawl_data_from_page(self,
@@ -31,6 +33,7 @@ class MyanmarNowCrawler:
             news_list.append(self.crawl_data_from_article(link))
 
         return news_list
+
 
     def crawl_data_from_article(self, url : str) -> Optional[Article]:
         return self.worker.format_news(url)

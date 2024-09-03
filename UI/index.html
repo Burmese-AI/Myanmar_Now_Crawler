@@ -6,47 +6,98 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>URL Crawler</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="bg-gradient-to-br from-purple-500 to-indigo-600 min-h-screen flex items-center justify-center p-4">
-  <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full">
+  <div class="bg-white rounded-lg shadow-xl p-8 max-w-4xl w-full">
     <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">News Crawler</h1>
-    <form id="crawlForm" action="/crawl" method="POST" class="space-y-4">
+    <form id="crawlForm" class="space-y-4 mb-8">
       <div class="relative">
-
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-
-          <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414
-               1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414
-               1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3
-               3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
-              clip-rule="evenodd" />
-          </svg>
-
-        </div>
-
         <input type="url" id="url" name="url" class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300
-        focus:ring-2 focus:ring-purple-600
-        focus:border-transparent outline-none transition" placeholder="Enter URL to crawl" required>
-
+        focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none transition"
+          placeholder="Enter URL to crawl" required>
       </div>
-
       <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg
         transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
         Start Crawling
       </button>
-
     </form>
+
+    <div id="results" class="mt-8 space-y-6">
+      <!-- Results will be dynamically inserted here -->
+    </div>
   </div>
 
   <script>
-    document.getElementById('crawlForm').addEventListener('submit', function (event) {
-      var urlInput = document.getElementById('url');
-      if (!urlInput.validity.valid) {
+    $(document).ready(function () {
+      $('#crawlForm').on('submit', function (event) {
         event.preventDefault();
-        urlInput.classList.add('border-red-500');
+        var urlInput = $('#url');
+        if (urlInput[0].validity.valid) {
+          // Show loading indicator
+          $('#results').html('<p class="text-center">Crawling... Please wait.</p>');
+
+          //Send AJAX request to server
+          $.ajax({
+            url: '/crawl',
+            method: 'POST',
+            data: { url: urlInput.val() },
+            dataType: 'json',
+            success: function (response) {
+              if (response.error) {
+                $('#results').html(`<p class="text-center text-red-500">Error: ${response.error}</p>`);
+              } else {
+                displayResults(response);
+              }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              $('#results').html(`
+                <p class="text-center text-red-500">An error occurred while crawling:</p>
+                <p class="text-center">${jqXHR.responseText || errorThrown}</p>
+                <p class="text-center mt-2">Please try again or contact support if the issue persists.</p>
+              `);
+            }
+          });
+        } else {
+          urlInput.addClass('border-red-500');
+        }
+      });
+
+      function displayResults(articles) {
+        const $resultsContainer = $('#results');
+        $resultsContainer.empty();
+
+        // If articles is not an array, wrap it in an array
+        if (!Array.isArray(articles)) {
+          articles = [articles];
+        }
+
+        if (articles.length === 0) {
+          $resultsContainer.html('<p class="text-center">No articles found.</p>');
+          return;
+        }
+
+        $.each(articles, function (index, article) {
+          const $articleElement = $('<div>').addClass('bg-gray-100 p-4 rounded-lg').html(`
+            <h2 class="text-xl font-bold text-gray-800">${article.title || 'No Title'}</h2>
+            <h3 class="text-lg text-gray-600 mt-1">${article.subtitle || ''}</h3>
+            <p class="text-sm text-gray-500 mt-2">${article.date || 'No Date'}</p>
+            <p class="mt-3">${article.content || 'No Content'}</p>
+            <p class="text-sm text-blue-600 mt-2">Source: ${article.source || 'Unknown'}</p>
+            <button class="save-btn mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+              Save Article
+            </button>
+          `);
+          $resultsContainer.append($articleElement);
+        });
       }
+
+      // Event listener for save buttons
+      $(document).on('click', '.save-btn', function () {
+        // Implement save functionality here
+        alert('Article saved!');
+      });
     });
   </script>
 </body>
