@@ -54,7 +54,7 @@ class MyanmarNowCrawler:
 
         #what if url is category url
         if category_url in url:
-            return self.crawl_data_from_category(
+            return self.crawl_data_from_page(
                 '[role="main"]',
                 'a.more-link.button')
 

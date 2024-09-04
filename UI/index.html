@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>URL Crawler</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body class="bg-gradient-to-br from-purple-500 to-indigo-600 min-h-screen flex items-center justify-center p-4">
@@ -29,14 +29,24 @@
     </div>
   </div>
 
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
   <script>
     $(document).ready(function () {
+      function showLoader() {
+        $('#results').html('<div class="text-center"><i class="fas fa-spinner fa-spin fa-3x text-purple-600"></i></div>');
+      }
+
+      function hideLoader() {
+        $('#results').empty();
+      }
+
       $('#crawlForm').on('submit', function (event) {
         event.preventDefault();
         var urlInput = $('#url');
         if (urlInput[0].validity.valid) {
-          // Show loading indicator
-          $('#results').html('<p class="text-center">Crawling... Please wait.</p>');
+          showLoader();
 
           //Send AJAX request to server
           $.ajax({
@@ -45,6 +55,8 @@
             data: { url: urlInput.val() },
             dataType: 'json',
             success: function (response) {
+              hideLoader();
+
               if (response.error) {
                 $('#results').html(`<p class="text-center text-red-500">Error: ${response.error}</p>`);
               } else {
@@ -52,10 +64,10 @@
               }
             },
             error: function (jqXHR, textStatus, errorThrown) {
+              hideLoader();
+
               $('#results').html(`
                 <p class="text-center text-red-500">An error occurred while crawling:</p>
-                <p class="text-center">${jqXHR.responseText || errorThrown}</p>
-                <p class="text-center mt-2">Please try again or contact support if the issue persists.</p>
               `);
             }
           });

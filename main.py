@@ -4,7 +4,7 @@ from config import setup_chrome
 def main():
     driver = setup_chrome()
     crawler = MyanmarNowCrawler(driver)
-    news =crawler.crawl('url you want to crawl in Myanmar Now website')
+    news =crawler.crawl('https://myanmar-now.org/en/news/category/news/')
     print(news)
 
 if __name__ == "__main__":
