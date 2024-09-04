@@ -44,6 +44,25 @@ class MyanmarNowWorker:
             self.logger.error(f'Error - {e}')
             return None
 
+    def get_news_links_from_home_page(self, container_selector: str, a_tag: str) -> Optional[list[str]] :
+        try:
+            links = []
+
+            containers = self.driver.find_elements(By.CSS_SELECTOR, container_selector)
+
+            for container in containers:
+                a_tags = container.find_elements(By.CSS_SELECTOR, a_tag)
+
+                for a in a_tags:
+                    links.append(a.get_attribute('href'))
+
+            self.logger.info(f'Gathered {len(links)} links')
+            return links
+
+        except Exception as e:
+            self.logger.error(f'Error - {e}')
+            return None
+
 
     def format_news(self, link : str) -> Optional[Article] :
             self.driver.get(link)

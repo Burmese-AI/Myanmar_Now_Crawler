@@ -34,12 +34,26 @@ class MyanmarNowCrawler:
 
         return news_list
 
+    def crawl_data_from_home(self, container_selector : str, a_tag : str) -> Optional[list[str]]:
+        links = self.worker.get_news_links_from_home_page(container_selector, a_tag)
+
+        if not links:
+            self.logger.warning('there is no links')
+            return None
+
+        return links
+
+
 
     def crawl_data_from_article(self, url : str) -> Optional[Article]:
         return self.worker.format_news(url)
 
 
-    def crawl(self, url : str) -> Union[Optional[Article], Optional[list[Article]]]:
+    def crawl(self, url : str) -> Union[
+        Optional[Article],
+        Optional[list[Article]],
+        Optional[list[str]]
+    ]:
 
         #for english language
         home_url = 'https://myanmar-now.org'
@@ -99,8 +113,8 @@ class MyanmarNowCrawler:
         elif home_url in url:
             self.logger.info("crawling home url")
 
-            return self.crawl_data_from_page(
-                '#tiepost-21224-section-3016',
+            return self.crawl_data_from_home(
+                'div.main-content.tie-col-md-12',  #tiepost-21224-section-3016
                 'div.slide.tie-standard.slick-slide.slick-cloned h2 a')
 
         else:
