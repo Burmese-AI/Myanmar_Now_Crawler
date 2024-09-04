@@ -40,9 +40,16 @@ class MyanmarNowCrawler:
 
 
     def crawl(self, url : str) -> Union[Optional[Article], Optional[list[Article]]]:
+
+        #for english language
         home_url = 'https://myanmar-now.org'
-        category_url = 'https://myanmar-now.org/en/news/category/'
-        article_url = 'https://myanmar-now.org/en/news/'
+        category_url = 'https://myanmar-now.org/en/news/category'
+        article_url = 'https://myanmar-now.org/en/news'
+
+        #for myanmar language
+        mm_home_url = 'https://myanmar-now.org/mm'
+        mm_category_url = 'https://myanmar-now.org/mm/news/category'
+        mm_article_url = 'https://myanmar-now.org/mm/news'
 
         self.driver.get(url)
 
@@ -54,16 +61,44 @@ class MyanmarNowCrawler:
 
         #what if url is category url
         if category_url in url:
+            self.logger.info("crawling category url")
+
+            return self.crawl_data_from_page(
+                '[role="main"]',
+                'a.more-link.button')
+
+        #what if url is mm category url
+        elif mm_category_url in url:
+            self.logger.info("crawling mm category url")
+
             return self.crawl_data_from_page(
                 '[role="main"]',
                 'a.more-link.button')
 
         #what if url is article url
         elif article_url in url:
+            self.logger.info("crawling article url")
+
             return self.crawl_data_from_article(url)
+
+        #what if url is mm article url
+        elif mm_article_url in url:
+            self.logger.info("crawling mm article url")
+
+            return self.crawl_data_from_article(url)
+
+        #what if url is mm home url
+        elif mm_home_url in url:
+            self.logger.info("crawling mm home url")
+
+            return self.crawl_data_from_page(
+                '#tiepost-37659-section-1135',
+                'div.slide.tie-standard.slick-slide.slick-cloned h2 a')
 
         #what if url is home url
         elif home_url in url:
+            self.logger.info("crawling home url")
+
             return self.crawl_data_from_page(
                 '#tiepost-21224-section-3016',
                 'div.slide.tie-standard.slick-slide.slick-cloned h2 a')
