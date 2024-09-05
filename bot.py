@@ -2,11 +2,13 @@ from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, WebAppInfo
 from telegram.ext import ApplicationBuilder, CallbackContext, CommandHandler, MessageHandler, filters
 from credentials import BOT_TOKEN, BOT_USERNAME
 
+
 async def launch_web_ui(update: Update, callback: CallbackContext):
     kb = [
         [KeyboardButton("Show me Google!", web_app=WebAppInfo("https://google.com"))]
     ]
     await update.message.reply_text("Let's do this...", reply_markup=ReplyKeyboardMarkup(kb))
+
 
 if __name__ == '__main__':
     # create the bot from the token

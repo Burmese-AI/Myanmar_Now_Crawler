@@ -8,6 +8,8 @@ import html
 
 from news_web.myanmar_now.crawler import MyanmarNowCrawler
 from config import setup_chrome
+from model.article import Article
+
 
 
 driver = setup_chrome()
@@ -30,12 +32,21 @@ def crawl():
         print(f"requested URL: {url}")
         news = mn_crawler.crawl(url)
         print(news)
+        print(type(news))
 
-        if not isinstance(news, list):
+        response = {}
+
+        if type(news) is Article :
             news = [news]
+            response['articles'] = [article.__dict__ for article in news]
 
-        response = [article.__dict__ for article in news]
+        elif type(news) is list and type(news[0]) is Article:
+            response['articles'] = [article.__dict__ for article in news]
+        else:
+            #change links array to dictionary
+            response['links'] = {f"link_{i}": link for i, link in enumerate(news)}
 
+        print(response)
         return jsonify(response)
 
     except Exception as e:
