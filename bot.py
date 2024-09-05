@@ -1,7 +1,6 @@
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, WebAppInfo
 from telegram.ext import ApplicationBuilder, CallbackContext, CommandHandler, MessageHandler, filters
 from credentials import BOT_TOKEN, BOT_USERNAME
-import json
 
 async def launch_web_ui(update: Update, callback: CallbackContext):
     kb = [
