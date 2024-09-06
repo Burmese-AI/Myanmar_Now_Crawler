@@ -3,6 +3,7 @@ from typing import Optional, Union
 from config import setup_logger
 from model.article import Article
 from selenium.webdriver.chrome.webdriver import WebDriver
+import time
 
 from .worker import MyanmarNowWorker
 
@@ -16,10 +17,13 @@ class MyanmarNowCrawler:
 
     #to crawl data from page containing multiple articles
     def crawl_data_from_page(self,
-                             container : str,
-                             a_tag : str) -> Optional[list[Article]]:
-
-        news_list : list[Article] = []
+              dept: int,
+              container : str,
+              a_tag : str
+              ) -> Union[
+                  Optional[list[Article]],
+                  Optional[list[str]]
+                  ]:
 
         #get all news links from page
         links = self.worker.get_news_links(container, a_tag)
@@ -28,31 +32,81 @@ class MyanmarNowCrawler:
             self.logger.warning('there is no links')
             return None
 
-        #crawl news from news links
-        for link in links:
-            news_list.append(self.crawl_data_from_article(link))
+        if dept > 1 :
+            dept -= 1
 
-        return news_list
+            news_list : list[Article] = []
 
-    def crawl_data_from_home(self, container_selector : str, a_tag : str) -> Optional[list[str]]:
-        links = self.worker.get_news_links_from_home_page(container_selector, a_tag)
+            #crawl news from news links
+            for link in links:
+                time.sleep(3)
+                news_list.append(self.crawl_data_from_article(link))
 
-        if not links:
-            self.logger.warning('there is no links')
-            return None
+            return news_list
 
+        #if dept option is not greater than 1, then return links
         return links
 
 
+    #to crawl data from home page
+    def crawl_data_from_home(self, dept : int) ->  Union[
+        Optional[
+            list[list[Article]]
+            ],
+        Optional[
+            list[list[str]]
+            ]
+        ]:
 
+        try:
+            links = self.worker.get_category_links()
+
+            if not links:
+                self.logger.warning('there is no links')
+                return None
+
+            #if dept option is greater than 1, then crawl data from each category
+            if dept > 1 :
+                dept -= 1
+
+                data_list = []
+
+                for link in links:
+                    time.sleep(2)
+
+                    self.logger.info(f'opening {link}')
+                    self.driver.get(link)
+
+                    data = self.crawl_data_from_page(
+                        dept=dept,
+                        container='[role="main"]',
+                        a_tag='a.more-link.button')
+
+                    data_list.append(data)
+                    self.logger.info(f'reached {link}')
+
+                return data_list
+
+            #if dept option is not greater than 1, then return category links
+            return links
+
+        except Exception as e:
+            self.logger.error(f'Error - {e}')
+            return None
+
+
+    #to crawl data from article
     def crawl_data_from_article(self, url : str) -> Optional[Article]:
         return self.worker.format_news(url)
 
 
-    def crawl(self, url : str) -> Union[
+    #main crawler using from outside
+    def crawl(self, url : str, dept : int = 1) -> Union[
         Optional[Article],
         Optional[list[Article]],
-        Optional[list[str]]
+        Optional[list[str]],
+        Optional[list[list[Article]]],
+        Optional[list[list[str]]]
     ]:
 
         #for english language
@@ -78,16 +132,18 @@ class MyanmarNowCrawler:
             self.logger.info("crawling category url")
 
             return self.crawl_data_from_page(
-                '[role="main"]',
-                'a.more-link.button')
+                dept=dept,
+                container='[role="main"]',
+                a_tag='a.more-link.button')
 
         #what if url is mm category url
         elif mm_category_url in url:
             self.logger.info("crawling mm category url")
 
             return self.crawl_data_from_page(
-                '[role="main"]',
-                'a.more-link.button')
+                dept=dept,
+                container='[role="main"]',
+                a_tag='a.more-link.button')
 
         #what if url is article url
         elif article_url in url:
@@ -105,17 +161,13 @@ class MyanmarNowCrawler:
         elif mm_home_url in url:
             self.logger.info("crawling mm home url")
 
-            return self.crawl_data_from_page(
-                '#tiepost-37659-section-1135',
-                'div.slide.tie-standard.slick-slide.slick-cloned h2 a')
+            return self.crawl_data_from_home(dept)
 
         #what if url is home url
         elif home_url in url:
             self.logger.info("crawling home url")
 
-            return self.crawl_data_from_home(
-                'div.main-content.tie-col-md-12',  #tiepost-21224-section-3016
-                'div.slide.tie-standard.slick-slide.slick-cloned h2 a')
+            return self.crawl_data_from_home(dept)
 
         else:
             self.logger.warning(f'{url} is not existed in Myanmar Now')

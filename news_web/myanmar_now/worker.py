@@ -44,6 +44,24 @@ class MyanmarNowWorker:
             self.logger.error(f'Error - {e}')
             return None
 
+
+    def get_category_links(self)  :
+        try:
+            links = []
+            container = self.find_by_css_selector('div#main-nav-menu.main-menu.header-menu')
+
+            list = container.find_elements(By.CSS_SELECTOR, 'li.menu-item:not(.menu-item-has-children):not(.menu-item-has-icon)')
+
+            for li in list:
+                links.append(li.find_element(By.CSS_SELECTOR, 'a').get_attribute('href'))
+
+            self.logger.info(f'Gathered {len(links)} links from nav bar')
+            return links
+
+        except Exception as e:
+            self.logger.error(f'Error - {e}')
+            return None
+
     def get_news_links_from_home_page(self, container_selector: str, a_tag: str) -> Optional[list[str]] :
         try:
             links = []
