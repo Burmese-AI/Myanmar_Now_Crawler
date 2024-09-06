@@ -1,0 +1,7 @@
+selenium==4.24.0
+webdriver-manager==3.8.6
+fake-useragent==0.1.11
+pydantic==2.6.4
+python-telegram-bot==2.0.0
+python-dotenv==1.0.0
+flask==2.3.3
