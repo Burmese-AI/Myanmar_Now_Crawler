@@ -71,7 +71,7 @@
               hideLoader();
 
               $('#results').html(`
-                <p class="text-center text-red-500">An error occurred while crawling:</p>
+                <p class="text-center text-red-500">An error occurred while crawling: ${errorThrown}</p>
               `);
             }
           });

@@ -7,58 +7,71 @@ from flask import (
 import html
 
 from news_web.myanmar_now.crawler import MyanmarNowCrawler
-from config import setup_chrome
+from config import setup_chrome, setup_logger
 from model.article import Article
 
 
+logger = setup_logger(__name__)
 
 driver = setup_chrome()
 mn_crawler = MyanmarNowCrawler(driver)
 
 
 app = Flask(__name__, template_folder='./UI')
+logger.info("Flask app created")
 
 @app.route('/')
 def index():
+    logger.info("Index route called")
     return render_template('index.html')
+
 
 
 @app.route('/crawl', methods=['POST'])
 def crawl():
+    logger.info("Crawl route called")
     try:
         data = request.form
         url = data.get('url')
 
-        print(f"requested URL: {url}")
-        news = mn_crawler.crawl(url)
-        print(news)
-        print(type(news))
+        logger.info(f"requested URL: {url}")
+        data = mn_crawler.crawl(url)
+        logger.info(type(data))
 
         response = {}
 
-        if type(news) is Article :
-            news = [news]
-            response['articles'] = [article.__dict__ for article in news]
+        if not data:
+            logger.info("No data found")
+            response['error'] = 'No data found'
 
-        elif type(news) is list and type(news[0]) is Article:
-            response['articles'] = [article.__dict__ for article in news]
-        else:
+        if type(data) is Article :
+            logger.info("data is Article")
+            data = [data]
+            response['articles'] = [article.__dict__ for article in data]
+
+        elif type(data) is list and type(data[0]) is Article:
+            logger.info("data is list of Article")
+            response['articles'] = [article.__dict__ for article in data]
+
+        elif type(data) is list and type(data[0]) is str:
+            logger.info("data is list of links")
             #change links array to dictionary
-            response['links'] = {f"link_{i}": link for i, link in enumerate(news)}
+            response['links'] = {f"link_{i}": link for i, link in enumerate(data)}
 
-        print(response)
-        return jsonify(response)
+        logger.info(response)
+        return jsonify(response), 200
 
     except Exception as e:
+        logger.error(f"Error in crawl route: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 
 @app.route('/download', methods=['POST'])
 def download():
+    logger.info("Download route called")
     try:
-        print("Received data:", request.json)
+        logger.info("Received data:", request.json)
         article = request.json.get('article')
-        print("Received data:", article)
 
         if not article:
             return "Article not found", 404
@@ -101,7 +114,7 @@ def download():
         return jsonify(response_data), 200
 
     except Exception as e:
-        print("Error in download route:", str(e))
+        logger.error("Error in download route:", str(e))
         return jsonify({'error': str(e)}), 500
 
 
