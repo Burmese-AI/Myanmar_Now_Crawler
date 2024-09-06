@@ -31,11 +31,14 @@ def index():
 def crawl():
     logger.info("Crawl route called")
     try:
+
         data = request.form
         url = data.get('url')
+        depth :int = int(data.get('depth'))
 
-        logger.info(f"requested URL: {url}")
-        data = mn_crawler.crawl(url)
+        logger.info(f"requested URL: {url} | depth: {depth}")
+        data = mn_crawler.crawl(url, depth)
+
         logger.info(type(data))
 
         response = {}
@@ -57,6 +60,20 @@ def crawl():
             logger.info("data is list of links")
             #change links array to dictionary
             response['links'] = {f"link_{i}": link for i, link in enumerate(data)}
+
+        elif type(data) is list and type(data[0]) is list and type(data[0][0]) is Article:
+            logger.info("data is list of list of Article")
+            #flatten the list of list of articles
+            flattened_articles = [article for sublist in data for article in sublist]
+            response['articles'] = [article.__dict__ for article in flattened_articles]
+
+        elif type(data) is list and type(data[0]) is list and type(data[0][0]) is str:
+            logger.info("data is list of list of links")
+
+            #flatten the list of list of links
+            flattened_links = [link for sublist in data for link in sublist]
+
+            response['links'] = {f"link_{i}": link for i, link in enumerate(flattened_links)}
 
         logger.info(response)
         return jsonify(response), 200

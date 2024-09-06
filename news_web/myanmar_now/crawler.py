@@ -30,7 +30,7 @@ class MyanmarNowCrawler:
 
         if not links:
             self.logger.warning('there is no links')
-            return None
+            return []
 
         if dept > 1 :
             dept -= 1
@@ -39,7 +39,7 @@ class MyanmarNowCrawler:
 
             #crawl news from news links
             for link in links:
-                time.sleep(3)
+                time.sleep(1)
                 news_list.append(self.crawl_data_from_article(link))
 
             return news_list
