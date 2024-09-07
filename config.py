@@ -26,7 +26,6 @@ def setup_chrome():
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument(f'user-agent={user_agent}')
-    chrome_options.binary_location = '/usr/bin/chromium-browser'  # For Render's environment
 
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()),
