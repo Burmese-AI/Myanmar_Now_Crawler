@@ -1,7 +1,10 @@
-selenium
-webdriver-manager
-fake-useragent
-pydantic
-python-telegram-bot
-python-dotenv
-flask
+fake-useragent==1.5.1
+Flask==3.0.3
+pydantic==2.8.2
+pydantic_core==2.20.1
+python-dotenv==1.0.1
+python-telegram-bot==21.3
+ruff==0.5.2
+selenium==4.23.1
+webdriver-manager==4.0.2
+gunicorn
