@@ -1,9 +1,12 @@
-from config import setup_logger
+from typing import Optional
+
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
-from typing import Optional
+
+from config import setup_logger
 from model.article import Article
+
 
 class MyanmarNowWorker:
     def __init__(self, driver: WebDriver):

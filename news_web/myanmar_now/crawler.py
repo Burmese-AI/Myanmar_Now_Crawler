@@ -1,9 +1,10 @@
+import time
 from typing import Optional, Union
+
+from selenium.webdriver.chrome.webdriver import WebDriver
 
 from config import setup_logger
 from model.article import Article
-from selenium.webdriver.chrome.webdriver import WebDriver
-import time
 
 from .worker import MyanmarNowWorker
 

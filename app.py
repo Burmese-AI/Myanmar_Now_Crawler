@@ -1,15 +1,10 @@
-from flask import (
-    Flask,
-    request,
-    render_template,
-    jsonify
-)
 import html
 
-from news_web.myanmar_now.crawler import MyanmarNowCrawler
+from flask import Flask, jsonify, render_template, request
+
 from config import setup_chrome, setup_logger
 from model.article import Article
-
+from news_web.myanmar_now.crawler import MyanmarNowCrawler
 
 logger = setup_logger(__name__)
 

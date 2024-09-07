@@ -1,5 +1,10 @@
-from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, WebAppInfo
-from telegram.ext import ApplicationBuilder, CallbackContext, CommandHandler, MessageHandler, filters
+from telegram import KeyboardButton, ReplyKeyboardMarkup, Update, WebAppInfo
+from telegram.ext import (
+    ApplicationBuilder,
+    CallbackContext,
+    CommandHandler,
+)
+
 from credentials import BOT_TOKEN, BOT_USERNAME
 
 
