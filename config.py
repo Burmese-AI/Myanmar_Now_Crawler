@@ -20,16 +20,17 @@ def setup_chrome():
     user_agent = UserAgent().random
     logger.info("user agent created")
 
-    chrome_options = Options()
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument(f'user-agent={user_agent}')
+    #chrome_options = Options()
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-gpu')
+    options.add_argument(f'user-agent={user_agent}')
 
     driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
-        options=chrome_options
+        #service=Service(ChromeDriverManager().install()),
+        options=options
     )
 
     logger.info(f"Chrome driver set up with User-Agent: {user_agent}")
