@@ -33,14 +33,14 @@ import os
 port = os.environ.get("PORT", 10000)
 bind = f"0.0.0.0:{port}"
 
-# Number of worker processes
-workers = multiprocessing.cpu_count() * 2 + 1
+# Reduce the number of workers
+workers = multiprocessing.cpu_count() + 1
 
-# Use gevent worker class for better concurrency
+# Use gevent worker class
 worker_class = "gevent"
 
-# Set timeout to 120 seconds
-timeout = 120
+# Increase the timeout
+timeout = 300  # 5 minutes
 
 # Enable access logging
 accesslog = "-"
@@ -48,8 +48,8 @@ accesslog = "-"
 # Set log level
 loglevel = "info"
 
-# Preload the application
-preload_app = True
+# Don't preload the application
+preload_app = False
 
 # Maximum number of requests a worker will process before restarting
 max_requests = 1000
@@ -60,6 +60,19 @@ reload = False
 
 # Daemonize the Gunicorn process (don't use this on Render)
 daemon = False
+
+# Set a maximum request line size to prevent large requests
+limit_request_line = 4094
+
+# Set the maximum number of simultaneous clients
+worker_connections = 1000
+
+# Set a lower keepalive timeout
+keepalive = 5
+
+# Graceful timeout
+graceful_timeout = 30
+
 EOF
 
 echo "Gunicorn configuration file created."
