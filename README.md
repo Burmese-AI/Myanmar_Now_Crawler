@@ -24,14 +24,23 @@ install dependencies
 pip install -r requirements.txt
 ```
 
+
 ## Run Locally
 
+- To run crawler web
 ```bash
 python app.py
 ```
 
-## Todo
+- To run telegram bot
+```bash
+python -m tele_bot.bot
+```
 
-- [ ] Deploy this app
-- [ ] Integrate with Telegram Bot
+## Concerns
 
+### Loading time
+If you use this telegram bot or [this deployed web](https://newscrawler-1.onrender.com/), loading time can be very long.
+
+### Perhaps out of memory error
+i

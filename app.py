@@ -21,7 +21,6 @@ def index():
     return render_template('index.html')
 
 
-
 @app.route('/crawl', methods=['POST'])
 def crawl():
     logger.info("Crawl route called")
