@@ -1,13 +1,20 @@
 # News Crawler
 
-This project is a simple news crawler that uses Selenium to crawl news from the **[Myanmar Now](https://myanmar-now.org/en/)**. Unfortunately, this web app is need to be deployed for production.
+This project is a simple news crawler that uses Selenium to crawl news from the **[Myanmar Now](https://myanmar-now.org/en/)**. 
+
+web app and telegram bot are here:
+- [News crawler web](https://newscrawler-1.onrender.com/)
+- [@nyu_spider_bot](https://t.me/nyu_spider_bot) (you need to run tele bot file)
+
+**[Note: Please read the concerns first](#concerns)**
+
 
 ## Features
 
-- request urls from users with depth options [1, 2, 3]
-- crawl data from url with depth options
-- send crawled data [may be multiple links or articles] back to user
-- enable to download single article with html format
+- Request URLs from users with depth options [1, 2, 3].
+- Crawl data from URLs with specified depth options.
+- Send crawled data (may include multiple links or articles) back to users.
+- Enable downloading of a single article in HTML format.
 
 
 ## Installation
@@ -27,7 +34,7 @@ pip install -r requirements.txt
 
 ## Run Locally
 
-- To run crawler web
+- To run crawler web app
 ```bash
 python app.py
 ```
@@ -39,8 +46,8 @@ python -m tele_bot.bot
 
 ## Concerns
 
-### Loading time
-If you use this telegram bot or [this deployed web](https://newscrawler-1.onrender.com/), loading time can be very long.
+### Loading Time
+Using this Telegram bot or [this deployed web application](https://newscrawler-1.onrender.com/) may result in long loading times.
 
-### Perhaps out of memory error
-i
+### Potential Out of Memory Error
+Crawling data with depth options [2, 3] in the Telegram bot or [this deployed web application](https://newscrawler-1.onrender.com/) may lead to server errors due to memory limitations.
