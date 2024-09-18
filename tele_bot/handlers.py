@@ -1,13 +1,11 @@
 from telegram import (
     KeyboardButton,
     ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
     Update,
     WebAppInfo,
-    ReplyKeyboardRemove
-    )
-
+)
 from telegram.ext import CallbackContext, ContextTypes
-
 
 crawler_url = "https://newscrawler-1.onrender.com/"
 
@@ -21,7 +19,7 @@ async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("""This bot can be used to crawl news from myanmar now.
                                      You need to provide url that you want to crawl and
                                     make sure these are myanmar now's urls""",
-                                    reply_markup=ReplyKeyboardRemove());
+                                    reply_markup=ReplyKeyboardRemove())
 
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f"Update {update} caused {context.error}")

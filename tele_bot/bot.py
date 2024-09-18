@@ -1,7 +1,7 @@
-from telegram.ext import  ApplicationBuilder, CommandHandler
-from .credentials import BOT_TOKEN, BOT_USERNAME
-from .handlers import launch_web_ui, help_cmd, error
+from telegram.ext import ApplicationBuilder, CommandHandler
 
+from .credentials import BOT_TOKEN, BOT_USERNAME
+from .handlers import error, help_cmd, launch_web_ui
 
 if __name__ == '__main__':
     # create the bot from the token
